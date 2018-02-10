@@ -390,9 +390,9 @@ ggplot(county_df, aes(x=TotalPop, fill = Region)) + geom_histogram() + labs(
 
 # Percentage of Men Across Total Population Distribution
 ggplot(county_df, aes(x=PercentageMen, fill = Region)) + geom_histogram() + labs(
-    x = "Men Population %",                                              # x axis title
-    y = "Count",                                                           # y axis title
-    title = "Men Population Distribution Across Various Regions"         # main title of figure 
+    x = "Men Population %",                                               # x axis title
+    y = "Count",                                                          # y axis title
+    title = "Men Population Distribution Across Various Regions"          # main title of figure 
 ) + facet_wrap(~Region) + scale_y_log10()
 
 # Percentage of Women Across Total Population Distribution
@@ -442,9 +442,7 @@ Your thoughts on the relationship between these variables?
 
 From the Scatterplots of the two variables Income & MeanCommute, we can see random scatter where each point in the data sets represent the corresponding value of the Income for a given Mean Commute Time and vice versa. It looks like the data points produce a pattern from left to right with some data points for the Lower Peninsula as Outliers. Overall, from the Sctterplots visuals it seems like the variables Income and the Mean Commute Time has a weak correlation betwen each other.
 
-Now, create a few more scatter plots using variables of your choosing in which
-you facet by peninsula as well. How do the relationships compare across the
-peninsulas?
+Now, create a few more scatter plots using variables of your choosing in which you facet by peninsula as well. How do the relationships compare across the peninsulas?
 
 # i) Scatterplots of Total Population by Income Across the Peninsula
 
@@ -481,6 +479,7 @@ Now use the full US data frame.
 Create a scatter plot of TotalPop by Income.
 
 ```{r xy_pop_inc}
+# Plot of Total Population by Income, Not Scaled
 ggplot(data = county_df, aes(x = Income, y = TotalPop)) + geom_point() 
 ```
 
@@ -496,11 +495,11 @@ ggplot(data = county_df, aes(x = Income, y = TotalPop)) + geom_point() + scale_y
 
 Write a short paragraph on why one might want to use a log scale or log transform of data when plotting.
 
-The datasets might have values that vary from each other on a large scale as seen in the first scatterplot above between Total Population and the Income as shown above. It is very hard to get a clarity on the data points whereby the datasets are overlapping on one another making it hard to comprehend any relationship between these two variables. This property of variability between two variables of data is due to the uneven variation of values with the mean value in the datasets often known as heteroscedastic variance. Using a log scale or, equivalently, using the log transform 'fixes' the uneven variability and gives a scale that is unbounded on both ends.
+The datasets might have values that vary from each other on a large scale as seen in the first scatterplot (# Plot of Total Population by Income, Not Scaled) above between Total Population and the Income. It is very hard to get a clarity on the data points whereby the datasets are overlapping on one another making it hard to comprehend any relationship between these two variables. This property of variability between two variables of data is due to the uneven variation of values with the mean value in the datasets often known as heteroscedastic variance. Using a log scale or, equivalently, using the log transform 'fixes' the uneven variability and gives a scale that is unbounded on both ends.
 
-Also, for time-series data, comes from the ability of a log scale to make fractional changes equivalent. With log scale a constant percentage change is seen as a constant vertical distance so a constant growth rate is seen as a straight line. That is often a substantial advantage.
+Also, for time-series data, the ability of a log scale to make fractional changes is immensely powerful. With log scale a constant percentage change is seen as a constant vertical distance so a constant growth rate is seen as a straight line. That is often a substantial advantage.
 
-Another reason when log scale proves to be powerful when it makes more realistic to represent the data in a reciprocal manner, as for example in research areas where someone is dealing with minutely small numbers.
+Another reason when log scale proves to be powerful, when it makes more realistic to represent the data in a reciprocal manner, as for example in research areas where someone is dealing with minutely small numbers.
 
 ### Hacker Extra - More analysis
 
@@ -511,6 +510,7 @@ control, or others.
 
 # i) Percentage of Women & Men Population Distribution For US Across Regions
 
+The histogram for the percentage of Men and Women Population across the entire US for the Regions Midwest, Northeast, South, and East seemed to be skewed to the left and right respectively. 
 ```{r}
 library(ggthemes)
 
@@ -524,15 +524,17 @@ g2 + theme_economist() + scale_colour_economist()
 
 # Percentage Distribution of Men Population Across Regions
 g2 <- ggplot(county_df, aes(x=Men/TotalPop*100)) + geom_histogram() + labs(
-    x = "Men Population %",                                                  # x axis title
-    y = "Count",                                                             # y axis title
-    title="Percenatge of Men Population Distribution Across Regions"         # main title of figure 
+    x = "Men Population %",                                                   # x axis title
+    y = "Count",                                                              # y axis title
+    title="Percenatge of Men Population Distribution Across Regions"          # main title of figure 
 ) + facet_wrap(~Region) 
 g2 + theme_excel() + scale_colour_excel()
 
 ```
 
 # ii) Distribution of Total Population & Income Per Capita In Michigan
+
+There appears to be a linearity for the two variables Total Population and Income Per Capita, in both the Lower & Upper Peninsula with some of the outliers scattered within the data sets. The outliers for the Lower Peninsula in describing the relationship between Total Population and Income Per Capita seems to be more than the outliers for the data points of Upper Peninsula.
 
 ```{r}
 ggplot(county_MI, aes(IncomePerCap, TotalPop, color = peninsula)) + geom_point() + scale_y_log10() + geom_smooth(method = "lm") + labs(
@@ -544,6 +546,8 @@ ggplot(county_MI, aes(IncomePerCap, TotalPop, color = peninsula)) + geom_point()
 
 # iii) Employment Distribution Across Total Population Across UP & LP in Michigan
 
+There seems to have a positive correlation between Employment Distribution across the Total Population in both the Upper & Lower Peninsula in Michigan.
+
 ```{r}
 ggplot(county_MI, aes(Employed, TotalPop, color = peninsula)) + geom_point() + scale_y_log10() + geom_point(aes(shape = peninsula), size = 3) + labs(
     x = "Employed",                                                              # x axis title
@@ -553,6 +557,8 @@ ggplot(county_MI, aes(Employed, TotalPop, color = peninsula)) + geom_point() + s
 ```
 
 # iv) Unemployment Distribution Across Total Population Across UP & LP in Michigan
+
+The Unemployment Distribution with respect to the Total Population seems to have a scattered relationship amongst the datapoints within the datasets and hence from the visuals of the graphical results we can conclude that the Unemployment Distribution and the Total Population across both the Upper & Lower Peninsula has a weak correlation. 
 
 ```{r}
 ggplot(county_MI, aes(Unemployment, TotalPop, color = peninsula)) + geom_point() + scale_y_log10() + geom_point(aes(shape = peninsula), size = 3) + labs(
@@ -564,6 +570,8 @@ ggplot(county_MI, aes(Unemployment, TotalPop, color = peninsula)) + geom_point()
 
 # v) Men Population Distribution in US Across Regions
 
+The Median of the percentage of Men Population Distribution across the various Regions such as the Midwest, Northeast, South, and West is in and around 50, with the upper whisker's outliers extending almost near 70 for South & West Region. And the lower whisker's outliers range extending almost near to 40 for South Region.
+
 ```{r}
 ggplot(county_df, aes(x=Region, y=PercentageMen, fill = Region)) + geom_boxplot() + labs(
     x = "Region",                                                    # x axis title
@@ -573,6 +581,8 @@ ggplot(county_df, aes(x=Region, y=PercentageMen, fill = Region)) + geom_boxplot(
 ```
 
 # vi) Women Population Distribution in US Across Regions
+
+The Median of the percentage of Women Population Distribution across the various Regions such as the Midwest, Northeast, South, and West is in and around 50, with the upper whisker's outliers extending almost near to 60 for South & near to 55 for the West Region. And the lower whisker's outliers range extending almost near to 30 for both the South & West Region.
 
 ```{r}
 ggplot(county_df, aes(x=Region, y=PercentageWomen, fill = Region)) + geom_boxplot() + labs(
