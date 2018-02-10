@@ -97,8 +97,27 @@ county_MI <- read.table("data/county_MI.csv", header=TRUE, sep=",", stringsAsFac
 ```
 
 Check the structure of each data.frame and use the `summary` function to begin
-exploring the data. Are there any NA values? What 
-differences do you notice between the structure of the two data frames.
+exploring the data. Are there any NA values? 
+
+Yes, there is one NA value for the dataframe, county_df for the variable Income, IncomeErr, and ChildPoverty.
+```{r}
+# Summary of dataframe county_df
+summary(county_df)
+```
+
+There is no NA value for the dataframe, county_MI. 
+```{r}
+# Summary of the dataframe county_MI
+summary(county_MI)
+```
+
+
+What differences do you notice between the structure of the two data frames.
+
+The data frame county_MI appears to be a sub-set of the dataframe county_df. 
+The data frame county_MI consists of the data related to the state of Michigan and also it does not have any NA values, as seen in the data frame county_df. 
+The number of variables in the data frame county_MI is one less than the dataframe county_df. And since, county_MI is a subset of the data frame county_df, therefore the number of observations is also less. 
+
 # Structure of Data Frame county_df
 ```{r}
 str(county_df)
