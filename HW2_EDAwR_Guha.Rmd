@@ -93,12 +93,33 @@ county_MI <- read.table("data/county_MI.csv", header=TRUE, sep=",", stringsAsFac
 ```
 
 Check the structure of each data.frame and use the `summary` function to begin
-exploring the data. Are there any NA values? What 
-differences do you notice between the structure of the two data frames.
+exploring the data. Are there any NA values? 
+
+There seems to have one NA values for the variable Income, IncomeErr and ChildPoverty for the dataframe county_df.  
+# Summary of county_df()
+```{r}
+summary(county_df)
+```
+
+# Summary of county_MI()
+```{r}
+summary(county_MI)
+```
+
+What differences do you notice between the structure of the two data frames?
+
+county_MI dataframe seems to be a sub dataset frame of county_df, without any NA values. 
+
+```{r}
+class(county_df)
+class(county_MI)
+```
+
 # Structure of Data Frame county_df
 ```{r}
 str(county_df)
 ```
+
 # Structure of Data Frame county_MI
 ```{r}
 str(county_MI)
@@ -118,35 +139,28 @@ income for the entire US.
 
 Write a short paragraph describing the distribution of median incomes.
 
+From the Histogram as we can see that both the Median and the Mean incomes are equal and hence the distribution of income over the entire US is symmetrically distributed. 
+From the Boxplot, it can be said that, the Median Income for the entire US is closer to the lower end of the spectrum of all the values and is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers). The Median income for the entire US is along the mid line of the box, starting a little below 50,000 and we can approximate the same as around $ 45,000.
+From both the Kernel Density Plot as well as the Violin plot we can see that the spread of the Income for the entire US is topping and buldging respectively somehwere around 45,000.
+
 # Histogram
 ```{r}
 median_income <- median(county_df$Income, na.rm = TRUE)
 median_income
 
-# ggplot(data = county_df) + geom_histogram(aes(x = median_income), binwidth = 100) 
+mean_income <- median(county_df$Income, na.rm = TRUE)
+mean_income
 
 library(ggplot2)
-#ggplot(data = county_df) + geom_histogram(aes(x = median(county_df$Income), na.rm = TRUE), binwidth = 5) 
-
-#ggplot(data = county_df) + geom_histogram(aes(x = median(Income)), binwidth = 10) 
-
 ggplot(data = county_df) + 
-  geom_histogram(aes(x = Income), binwidth = 3000, fill = "steelblue", colour="Black")
-
-#ggplot(data = mpg) +
-  #geom_boxplot(mapping = aes(x = reorder(class, hwy, FUN = median), y = hwy))
-
-#ggplot(data = county_df) + geom_histogram(aes(x = median_income), binwidth = 0.5)
-
-
-#ggplot(county_df) + geom_histogram(mapping = aes(median_income), binwidth = 0.5)
+  geom_histogram(aes(x = Income), binwidth = 3000, fill = "steelblue", colour="Black") 
 
 ```
 
 # BoxPlot 
-There needs to be some value corresposnding to x aesthetic, so used 1. 
+There needs to be some value corresposnding to y aesthetic, so used 1. 
 ```{r}
-ggplot(county_df, aes(y=Income, x=1)) + geom_boxplot(fill = "orange", alpha = 0.2)
+ggplot(county_df, aes(y=Income, x=1)) + geom_boxplot(fill = "orange", alpha = 0.2) 
 
 ```
 
@@ -166,7 +180,7 @@ ggplot(county_df, aes(x="US", y=Income)) + geom_violin(fill = "red", alpha = 0.2
 Create a histogram of total population for counties in the US.
 
 ```{r histo_totpop}
-ggplot(data = county_df) + geom_histogram(aes(x = TotalPop))
+ggplot(data = county_df) + geom_histogram(aes(x = TotalPop)) 
 ```
 
 Repeat the histogram about but make the following style changes to the plot.
@@ -182,29 +196,32 @@ ggplot(data = county_df) + geom_histogram(aes(x = TotalPop), fill = "violet", co
     x = "Total Population",                                    # x axis title
     y = "Number of counties",                                  # y axis title
     title = "Distribution of population for US counties"       # main title of figure
-  )
+  ) + scale_x_log10()
 ```
 
 **Hacker Extra** - Also create a kernel density plot overlaid on a histogram of
 Income. 
 
 ```{r}
-ggplot(county_df, aes(x=Income, y=..density..)) + geom_histogram(fill="cornsilk", color="grey60", size=.2) + geom_density()
+ggplot(county_df, aes(x=Income, y=..density..)) + geom_histogram(fill="cornsilk", color="grey60", size=.2) + geom_density() 
+
 ```
 
 
 Repeat the histogram but only for counties with less than 2.5 million people.
 
 ```{r histo_lt2.5m}
+# Created a dataframe with less than 2.5 million people
 county_sub <-subset(county_df, TotalPop < 2500000)
 county_sub
 
+# Calling data from the new data frame, county_sub with less than 2.5 million people
 library(ggplot2)
 ggplot(data = county_sub) + geom_histogram(aes(x = TotalPop), fill = "orange", color = "black") + labs(
     x = "Total Population",                                                                      # x axis title
     y = "Number of counties",                                                                    # y axis title
     title = "Distribution of population for US counties with less than 2.5 million poeple"       # main title of figure
-  )
+  ) + scale_x_log10()
 
 ```
 
@@ -224,17 +241,17 @@ ggplot(county_MI, aes(x=peninsula, y=Income, color=peninsula)) + geom_boxplot() 
 
 Do the peninsulas differ with respect to distribution of median income over the counties?
 
-Yes, from the Boxplot as shown below, it looks like there is a significant difference in the distribution of median income in the peninsulas over the counties.
-```{r}
-ggplot(county_MI, aes(x=peninsula, y=Income, fill=County)) + geom_boxplot() + labs(
-    x = "Peninsula",                          # x axis title
-    y = "Income"                              # y axis title
-    ) + scale_y_log10() 
-```
+Yes, from the Boxplot as shown above, it looks like there is a significant difference in the distribution of median income in the peninsulas over the counties.
+
 
 Create several more boxplots showing how the peninsulas compare with respect to
 some of the other variables. Summarize your findings in a few short paragraphs.
+
+Summarising the findings in numerical order as in the graph below:
+
 # i) Population Distribution Across Peninsula
+
+The total population distribution for LP is higher than that of the UP. The Median of the Total Population distribution for Upper Peninsula is closer to the lower end of the spectrum for all of the population value and is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers), indicating thin population distribution in Upper Peninsula as compared to that of the Lower Peninsula. On the other hand, the Median of the Total Population distribution is higher in Lower Peninsula as compared to that of the Upper Peninsula.
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=TotalPop, fill=peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                    # x axis title
@@ -243,6 +260,9 @@ ggplot(county_MI, aes(x=peninsula, y=TotalPop, fill=peninsula)) + geom_boxplot()
 ) + scale_y_log10()
 ```
 # ii) Poverty Distribution across Peninsula
+
+The Median of the poverty distribution for the UP is somewhere around 16 and is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers), indicating that the Median of the Poverty distribution is closer to the lower end of the entire spectrum in Upper Peninsula as compared to that of the Lower Peninsula. In case of the LP or Lower Peninsula, the Median of the poverty distribution is around 18 and is towards the right whiskers (top whiskers) as compared to the left whiskers (down whiskers). The Median of the poverty distribution for Lower Peninsula is at a higher side as compared to that of the Upper Peninsula.
+
 ```{r more_boxplplots}
 ggplot(county_MI, aes(x=peninsula, y=Poverty, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                    # x axis title
@@ -252,6 +272,9 @@ ggplot(county_MI, aes(x=peninsula, y=Poverty, fill = peninsula)) + geom_boxplot(
 
 ```
 # iii) Child Poverty Distribution across Peninsula
+
+The Median of the Child Poverty Distribution for Upper Peninsula is at 25 and it goes around the middle of the entire spectrum of the boxplot. From the Box-plot it looks like all the Quartiles for the Upper Peninsula are uniformly and equally distributed. The Median of the Child Poverty Distribution for Lower Peninsula is slightly below 25 and the Median of the Child Poverty Distribution for the entire spectrum of the boxplot is towards the top whiskers (or the right whiskers).
+
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=ChildPoverty, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                          # x axis title
@@ -261,14 +284,20 @@ ggplot(county_MI, aes(x=peninsula, y=ChildPoverty, fill = peninsula)) + geom_box
 
 ```
 # iv) Income per capita Distribution by Peninsula
+
+The Median of the Income Per Capita distribution across Upper Peninsula is lower than that of the Median of the Income per capita distribution in the Lower Peninsula. The Median of the Income per capita distribution for the Upper Peninsula is lower than the value of 22,500, while the Median of the Income per capita distribution for the Lower Peninsula is greater than the value of 22,500.
+
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=IncomePerCap, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                              # x axis title
-    y = "Income Per Capita",                                           # y axis title
+    y = "Income Per Capita",                                      # y axis title
     title = "Income per capita Distribution by Peninsula"         # main title of figure 
 ) 
 ```
 # v) Employment Distribution Across Peninsula
+
+Considering the Employment distribution across both the Upper & the Lower Peninsula, it looks like the Median of the Employment Distribution for the Upper Peninsula is much lower as compared to that of the Lower Peninsula. 
+
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=Employed, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                           # x axis title
@@ -277,6 +306,9 @@ ggplot(county_MI, aes(x=peninsula, y=Employed, fill = peninsula)) + geom_boxplot
 ) + scale_y_log10()
 ```
 # vi) Unemployment Distribution Across Peninsula
+
+The Median of the Unemployment Distribution across Upper Peninsula looks more towards the lower end of the down whisker (left whisker), within the entire spectrum of the Unemployment Distribution in Upper Peninsula. The Median of the Unemployment Distribution for Upper Peninsula is low as compared to the Median of the Unemployment Distribution for the Lower Peninsula. However, when compared to the Unemployment Distribution with the Lower Peninsula, the distribution of Unemployment in the Upper Peninsula appears to be more on a cummulative scale.  
+
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=Unemployment, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                           # x axis title
@@ -284,7 +316,11 @@ ggplot(county_MI, aes(x=peninsula, y=Unemployment, fill = peninsula)) + geom_box
     title = "Unemployment Distribution Across Peninsula"         # main title of figure 
 ) 
 ```
+
 # vii) Citizens Distribution Across Peninsula
+
+The Median of the number of Citizen Distribution looks to be on the higher side for the Lower Peninsula as compared to that of the Upper Peninsula. The Median value of the Citizen Distribution is closer towards the lower end of the entire spectrum, for the Upper Peninsula. While the Median value of the Citizen Distribution across the Lower Peninsula seems to be little dragged towards the down whisker (left). The entire quartile for the citizens distribution across both the Upper Peninsula is smaller as compared to that of the Lower Peninsula. 
+
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=Citizen, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                         # x axis title
@@ -293,31 +329,40 @@ ggplot(county_MI, aes(x=peninsula, y=Citizen, fill = peninsula)) + geom_boxplot(
 ) + scale_y_log10()
 ```
 # viii) Number of Men & Women Across the Peninsula
+
+The Median of the number of Men across the Upper Peninsula seems to be more closer towards the down whisker (left whisker). The Median of the number of Men across the Lower Peninsula seems to be little inclined towards the down whisker (left whisker).The entire quartile for the distribution of the number of Men is more in Lower Peninsula as compared to that of the Upper Peninsula. 
+
+The Median of the number of Women across the Upper Peninsula seems to be more closer towards the down whisker (left whisker). The Median of the number of Women across the Lower Peninsula seems to be little inclined towards the down whisker (left whisker).The entire quartile for the distribution of the number of Women is more in Lower Peninsula as compared to that of the Upper Peninsula. 
+
+
 ```{r more_boxplots}
 # Number of Men
 ggplot(county_MI, aes(x=peninsula, y=Men, fill = peninsula)) + geom_boxplot() + labs(
-    x = "Peninsula",                                 # x axis title
-    y = "Men",                                       # y axis title
-    title = "Number of Men Across Peninsula"         # main title of figure 
+    x = "Peninsula",                                   # x axis title
+    y = "Men",                                         # y axis title
+    title = "Number of Men Across Peninsula"           # main title of figure 
 ) + scale_y_log10()
 
 # Number of Women 
 ggplot(county_MI, aes(x=peninsula, y=Women, fill = peninsula)) + geom_boxplot() + labs(
-    x = "Peninsula",                                         # x axis title
-    y = "Men",                                           # y axis title
+    x = "Peninsula",                                   # x axis title
+    y = "Women",                                       # y axis title
     title = "Number of Women Across Peninsula"         # main title of figure 
 ) + scale_y_log10()
 
 ```
 # ix) Mean Commute Time Across Peninsula
+
+The Median of the Mean Commute Time in Upper Peninsula seems to be more closer towards the Median value of the Mean Commute Time, which is approximately 17. It looks like the Mean Commute Time in Upper Peninsula is less than that of the Lower Peninsula. The Median of the Mean Commute Time in Lower Peninsula seems to be little inclined towards the down whisker (left whisker) of the entire quartile. 
+
+
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=MeanCommute, fill = peninsula)) + geom_boxplot() + labs(
-    x = "Peninsula",                                         # x axis title
-    y = "Mean Commute",                                           # y axis title
+    x = "Peninsula",                                     # x axis title
+    y = "Mean Commute",                                  # y axis title
     title = "Mean Commute Time Across Peninsula"         # main title of figure 
 ) 
 ```
-
 
 ### Problem 5 - How do regions of the country compare?
 
@@ -326,10 +371,49 @@ histograms showing how some variable of interest to you compares by region. For
 example, you could explore how the regions compare with respect to the
 distribution of MeanCommute time. Make sure your graph has a title and good axis
 labels.
-
+# Mean Commute Time Across Various Regions
 ```{r faceted_histo}
+ggplot(county_df, aes(x=MeanCommute, fill = Region)) + geom_histogram() + labs(
+    x = "Mean Commute Time",                                   # x axis title
+    y = "Count",                                               # y axis title
+    title = "Mean Commute Time Across Various Regions"         # main title of figure 
+) + facet_wrap(~Region) 
 
 ```
+
+# Total Population Distribution & Distribution of Population By Gender
+```{r faceted_histo}
+
+# Featured Engineering of PercentageMen & PercentageWomen
+county_df$PercentageMen <- (county_df$Men/county_df$TotalPop)*100
+county_df$PercentageWomen <- (county_df$Women/county_df$TotalPop)*100
+
+# Dropping a Column added by mistake
+county_df$PercentageMale <- NULL
+
+# Total Population Distribution
+ggplot(county_df, aes(x=TotalPop, fill = Region)) + geom_histogram() + labs(
+    x = "Total Population",                                                # x axis title
+    y = "Count",                                                           # y axis title
+    title = "Total Population Distribution Across Various Regions"         # main title of figure 
+) + facet_wrap(~Region) + scale_x_log10()
+
+# Percentage of Men Across Total Population Distribution
+ggplot(county_df, aes(x=PercentageMen, fill = Region)) + geom_histogram() + labs(
+    x = "Men Population %",                                              # x axis title
+    y = "Count",                                                           # y axis title
+    title = "Men Population Distribution Across Various Regions"         # main title of figure 
+) + facet_wrap(~Region) + scale_y_log10()
+
+# Percentage of Women Across Total Population Distribution
+ggplot(county_df, aes(x=PercentageWomen, fill = Region)) + geom_histogram() + labs(
+    x = "Women Population %",                                              # x axis title
+    y = "Count",                                                           # y axis title
+    title = "Women Population Distribution Across Various Regions"         # main title of figure 
+) + facet_wrap(~Region) + scale_y_log10()
+
+```
+
 
 ### Problem 6 - Basic bar chart
 
@@ -337,7 +421,13 @@ Create a bar chart showing the number of counties by Region in the US. Make sure
 your graph has a title and good axis labels.
 
 ```{r bar_counties_by_region}
-
+library(reshape2)
+ggplot(data=county_df, aes(x=Region, fill = Region)) +
+    geom_bar(stat="count") + labs(
+    x = "Region",                                             # x axis title
+    y = "Number of Counties",                                 # y axis title
+    title = "Number of Counties by Regions in the US"         # main title of figure 
+) 
 ```
 
 ### Problem 7 - Basic scatter plots
@@ -346,24 +436,50 @@ Create a scatter plot using the Michigan only data frame comparing
 Income and MeanCommute.
 
 ```{r xy_inc_commute}
-
+ggplot(data = county_MI, aes(x = MeanCommute, y = Income)) + geom_point()
 ```
 
 Create a modified version of the above scatter plot in which the point color
 is mapped to peninsula.
 
 ```{r xy_inc_commute_peninsula}
-
+ggplot(county_MI, aes(MeanCommute, Income, color = peninsula)) + geom_point()
 ```
 
+
 Your thoughts on the relationship between these variables?
+
+From the Scatterplots of the two variables Income & MeanCommute, we can see random scatter where each point in the data sets represent the corresponding value of the Income for a given Mean Commute Time and vice versa. It looks like the data points produce a pattern from left to right with some data points for the Lower Peninsula as Outliers. Overall, from the Sctterplots visuals it seems like the variables Income and the Mean Commute Time has a weak correlation betwen each other. 
 
 Now, create a few more scatter plots using variables of your choosing in which
 you facet by peninsula as well. How do the relationships compare across the
 peninsulas?
 
-```{r xy_faceted_peninsula}
+# i) Scatterplots of Total Population by Income Across the Peninsula
 
+From the Scatterplots of the two variables, Total Population and the Income it looks like that there is a weak correlation between the Total Population and the Income across both the Upper and Lower Peninsula.
+
+```{r xy_faceted_peninsula}
+ggplot(county_MI, aes(Income, TotalPop, color = peninsula)) +
+geom_point() + facet_grid(peninsula ~ .)
+```
+
+# ii) Scatterplots of Total Population by Citizen Across the Peninsula
+
+From the Scatterplots of the two variables Total Population and the Citizen, there seems to be a steady slope between these two variables Total Population and Citizen. Hence, we can say that these two variables Total Population and Citizen have a Positive Correlation or in other words these two variables have a Strong Correlation between each other across both the Upper & Lower Peninsula in Michigan.
+
+```{r xy_pop_citizen}
+ggplot(county_MI, aes(Citizen, TotalPop, color = peninsula)) +
+geom_point() + facet_grid(. ~ peninsula)
+```
+
+# iii) Scatterplots of Total Population by Employment Across the Peninsula
+
+From the Scatterplots of the two variables, Total Population and the Unemployment, it looks like that there is a weak correlation between the Total Population and the Unemployment across both the Upper and Lower Peninsula.
+
+```{r}
+ggplot(county_MI, aes(Unemployment, TotalPop, color = peninsula)) +
+geom_point() + facet_grid(peninsula ~ .)
 ```
 
 
@@ -372,14 +488,27 @@ Now use the full US data frame.
 Create a scatter plot of TotalPop by Income.
 
 ```{r xy_pop_inc}
-
+ggplot(data = county_df, aes(x = Income, y = TotalPop)) + geom_point() 
 ```
 
 The widely varying values make this difficult to interpret in terms of looking
 for patterns. So, figure out a way to either change the axis scales or 
 the plotted data itself to use a base 10 logarithmic scale (or transform).
+
 Write a short paragraph on why one might want to use a log scale or log
 transform of data when plotting.
+
+The datasets might have values that vary from each other on a large scale as seen in the scatterplots between Total Population and the Income as shown above. It is very hard to get a clarity on the data points whereby the datasets are overlapping on one another making it hard to comprehend any relationship between these two variables. This property of variability between two variables of data is due to the uneven variation of values with the mean value in the datasets often known as heteroscedastic variance. Using a log scale or, equivalently, using the log transform 'fixes' the uneven variability and gives a scale that is unbounded on both ends.
+
+Also, for time-series data, comes from the ability of a log scale to make fractional changes equivalent. With log scale a constant percentage change is seen as a constant vertical distance so a constant growth rate is seen as a straight line. That is often a substantial advantage.
+
+Another reason when log scale proves to be powerful when it makes more realistic to represent the data in a reciprocal manner, as for example in research areas where someone is dealing with minutely small numbers.
+
+```{r xy_scaled_pop_inc}
+# Scaled Plot of Total Population by Income
+ggplot(data = county_df, aes(x = Income, y = TotalPop)) + geom_point() + scale_y_log10() 
+```
+
 
 ### Hacker Extra - More analysis
 
@@ -387,3 +516,76 @@ Do some additional plotting to look for interesting patterns or relationships
 either in the full US dataset or the MI only dataset. In addition, try out
 some of ggplots additional features such as themes, axis formatting, gridline
 control, or others.
+# i) Percentage of Women & Men Population Distribution For US Across Regions
+```{r}
+library(ggthemes)
+
+# Percentage Distribution of Women Population Across Regions
+g2 <- ggplot(county_df, aes(x=Women/TotalPop*100)) + geom_histogram() + labs(
+    x = "Women Population %",                                                  # x axis title
+    y = "Count",                                                               # y axis title
+    title="Percenatge of Women Population Distribution Across Regions"         # main title of figure 
+) + facet_wrap(~Region) 
+g2 + theme_economist() + scale_colour_economist()
+
+# Percentage Distribution of Men Population Across Regions
+g2 <- ggplot(county_df, aes(x=Men/TotalPop*100)) + geom_histogram() + labs(
+    x = "Men Population %",                                                  # x axis title
+    y = "Count",                                                             # y axis title
+    title="Percenatge of Men Population Distribution Across Regions"         # main title of figure 
+) + facet_wrap(~Region) 
+g2 + theme_excel() + scale_colour_excel()
+
+```
+
+# ii) Distribution of Total Population & Income Per Capita In Michigan 
+```{r}
+ggplot(county_MI, aes(IncomePerCap, TotalPop, color = peninsula)) + geom_point() + scale_y_log10() + geom_smooth(method = "lm") + labs(
+    x = "Income Per Capita",                                                              # x axis title
+    y = "Total Population",                                                               # y axis title
+    title="Distribution of Total Population & Income Per Capita Across Peninsula"         # main title of figure 
+)
+```
+
+# iii) Employment Distribution Across Total Population Across UP & LP in Michigan
+```{r}
+ggplot(county_MI, aes(Employed, TotalPop, color = peninsula)) + geom_point() + scale_y_log10() + geom_point(aes(shape = peninsula), size = 3) + labs(
+    x = "Employed",                                                              # x axis title
+    y = "Total Population",                                                      # y axis title
+    title="Employment Distribution in Total Population Across Peninsula"         # main title of figure 
+)
+```
+
+# iv) Unemployment Distribution Across Total Population Across UP & LP in Michigan
+```{r}
+ggplot(county_MI, aes(Unemployment, TotalPop, color = peninsula)) + geom_point() + scale_y_log10() + geom_point(aes(shape = peninsula), size = 3) + labs(
+    x = "Unemployment",                                                            # x axis title
+    y = "Total Population",                                                        # y axis title
+    title="Unemployment Distribution in Total Population Across Peninsula"         # main title of figure 
+)
+```
+
+# v) Men Population Distribution in US Across Regions
+```{r}
+ggplot(county_df, aes(x=Region, y=PercentageMen, fill = Region)) + geom_boxplot() + labs(
+    x = "Region",                                                    # x axis title
+    y = "Men Percentage",                                            # y axis title
+    title = "Women Population Distribution by Regions in US"         # main title of figure 
+) 
+```
+
+# v) Women Population Distribution in US Across Regions
+```{r}
+ggplot(county_df, aes(x=Region, y=PercentageWomen, fill = Region)) + geom_boxplot() + labs(
+    x = "Region",                                                  # x axis title
+    y = "Women Percentage",                                          # y axis title
+    title = "Women Population Distribution by Regions in US"         # main title of figure 
+) 
+```
+
+
+
+
+
+
+
