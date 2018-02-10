@@ -1,8 +1,10 @@
 ---
-title: "HW2-EDA with R - Part1: Plotting"
+title: 'HW2-EDA with R - Part1: Plotting'
 author: "misken"
 date: "January 22, 2018"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -42,6 +44,8 @@ track the .R file, the .Rmd file and your .gitignore file. Create a remote repo
 for this homework assignment in your GitHub account. Periodically push your commits
 to GitHub. When done with the assignment, paste in the URL of your GitHub project
 so that I can go look at it.
+
+https://github.com/ankitaguhaoakland/hw2_files
 
 ## Step 3 - Set working directory and explore data folder
 
@@ -166,7 +170,8 @@ ggplot(county_df, aes(x="US", y=Income)) + geom_violin(fill = "red", alpha = 0.2
 Create a histogram of total population for counties in the US.
 
 ```{r histo_totpop}
-ggplot(data = county_df) + geom_histogram(aes(x = TotalPop))
+ggplot(data = county_df) + geom_histogram(aes(x = TotalPop), binwidth = 400000)
+
 ```
 
 Repeat the histogram about but make the following style changes to the plot.
@@ -198,11 +203,10 @@ Repeat the histogram but only for counties with less than 2.5 million people.
 ```{r histo_lt2.5m}
 # Created a dataframe with less than 2.5 million people
 county_sub <-subset(county_df, TotalPop < 2500000)
-county_sub
 
 # Calling data from the new data frame, county_sub with less than 2.5 million people
 library(ggplot2)
-ggplot(data = county_sub) + geom_histogram(aes(x = TotalPop), fill = "orange", color = "black") + labs(
+ggplot(data = county_sub) + geom_histogram(aes(x = TotalPop), binwidth = 100000, fill = "orange", color = "black") + labs(
     x = "Total Population",                                                                      # x axis title
     y = "Number of counties",                                                                    # y axis title
     title = "Distribution of population for US counties with less than 2.5 million poeple"       # main title of figure
@@ -248,7 +252,7 @@ ggplot(county_MI, aes(x=peninsula, y=TotalPop, fill=peninsula)) + geom_boxplot()
 
 The Median of the poverty distribution for the UP is somewhere around 16 and is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers), indicating that the Median of the Poverty distribution is closer to the lower end of the entire spectrum in Upper Peninsula as compared to that of the Lower Peninsula. In case of the LP or Lower Peninsula, the Median of the poverty distribution is around 18 and is towards the right whiskers (top whiskers) as compared to the left whiskers (down whiskers). The Median of the poverty distribution for Lower Peninsula is at a higher side as compared to that of the Upper Peninsula.
 
-```{r more_boxplplots}
+```{r}
 ggplot(county_MI, aes(x=peninsula, y=Poverty, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                    # x axis title
     y = "Poverty",                                      # y axis title
@@ -261,7 +265,7 @@ ggplot(county_MI, aes(x=peninsula, y=Poverty, fill = peninsula)) + geom_boxplot(
 
 The Median of the Child Poverty Distribution for Upper Peninsula is at 25 and it goes around the middle of the entire spectrum of the boxplot. From the Box-plot it looks like all the Quartiles for the Upper Peninsula are uniformly and equally distributed. The Median of the Child Poverty Distribution for Lower Peninsula is slightly below 25 and the Median of the Child Poverty Distribution for the entire spectrum of the boxplot is towards the top whiskers (or the right whiskers).
 
-```{r more_boxplots}
+```{r}
 ggplot(county_MI, aes(x=peninsula, y=ChildPoverty, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                          # x axis title
     y = "Child Poverty",                                      # y axis title
@@ -274,7 +278,7 @@ ggplot(county_MI, aes(x=peninsula, y=ChildPoverty, fill = peninsula)) + geom_box
 
 The Median of the Income Per Capita distribution across Upper Peninsula is lower than that of the Median of the Income per capita distribution in the Lower Peninsula. The Median of the Income per capita distribution for the Upper Peninsula is lower than the value of 22,500, while the Median of the Income per capita distribution for the Lower Peninsula is greater than the value of 22,500.
 
-```{r more_boxplots}
+```{r}
 ggplot(county_MI, aes(x=peninsula, y=IncomePerCap, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                              # x axis title
     y = "Income Per Capita",                                      # y axis title
@@ -286,7 +290,7 @@ ggplot(county_MI, aes(x=peninsula, y=IncomePerCap, fill = peninsula)) + geom_box
 
 Considering the Employment distribution across both the Upper & the Lower Peninsula, it looks like the Median of the Employment Distribution for the Upper Peninsula is much lower as compared to that of the Lower Peninsula.
 
-```{r more_boxplots}
+```{r}
 ggplot(county_MI, aes(x=peninsula, y=Employed, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                           # x axis title
     y = "Employment",                                          # y axis title
@@ -298,7 +302,7 @@ ggplot(county_MI, aes(x=peninsula, y=Employed, fill = peninsula)) + geom_boxplot
 
 The Median of the Unemployment Distribution across Upper Peninsula looks more towards the lower end of the down whisker (left whisker), within the entire spectrum of the Unemployment Distribution in Upper Peninsula. The Median of the Unemployment Distribution for Upper Peninsula is low as compared to the Median of the Unemployment Distribution for the Lower Peninsula. However, when compared to the Unemployment Distribution with the Lower Peninsula, the distribution of Unemployment in the Upper Peninsula appears to be more on a cummulative scale.
 
-```{r more_boxplots}
+```{r}
 ggplot(county_MI, aes(x=peninsula, y=Unemployment, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                             # x axis title
     y = "Unemployment",                                          # y axis title
@@ -310,7 +314,7 @@ ggplot(county_MI, aes(x=peninsula, y=Unemployment, fill = peninsula)) + geom_box
 
 The Median of the number of Citizen Distribution looks to be on the higher side for the Lower Peninsula as compared to that of the Upper Peninsula. The Median value of the Citizen Distribution is closer towards the lower end of the entire spectrum, for the Upper Peninsula. While the Median value of the Citizen Distribution across the Lower Peninsula seems to be little dragged towards the down whisker (left). The entire quartile for the citizens distribution across both the Upper Peninsula is smaller as compared to that of the Lower Peninsula.
 
-```{r more_boxplots}
+```{r}
 ggplot(county_MI, aes(x=peninsula, y=Citizen, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                         # x axis title
     y = "Citizen",                                           # y axis title
@@ -324,7 +328,7 @@ The Median of the number of Men across the Upper Peninsula seems to be more clos
 
 The Median of the number of Women across the Upper Peninsula seems to be more closer towards the down whisker (left whisker). The Median of the number of Women across the Lower Peninsula seems to be little inclined towards the down whisker (left whisker).The entire quartile for the distribution of the number of Women is more in Lower Peninsula as compared to that of the Upper Peninsula.
 
-```{r more_boxplots}
+```{r}
 # Number of Men
 ggplot(county_MI, aes(x=peninsula, y=Men, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                    # x axis title
@@ -345,7 +349,7 @@ ggplot(county_MI, aes(x=peninsula, y=Women, fill = peninsula)) + geom_boxplot() 
 
 The Median of the Mean Commute Time in Upper Peninsula seems to be more closer towards the Median value of the Mean Commute Time, which is approximately 17. It looks like the Mean Commute Time in Upper Peninsula is less than that of the Lower Peninsula. The Median of the Mean Commute Time in Lower Peninsula seems to be little inclined towards the down whisker (left whisker) of the entire quartile.
 
-```{r more_boxplots}
+```{r}
 ggplot(county_MI, aes(x=peninsula, y=MeanCommute, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                     # x axis title
     y = "Mean Commute",                                  # y axis title
@@ -373,7 +377,7 @@ ggplot(county_df, aes(x=MeanCommute, fill = Region)) + geom_histogram() + labs(
 
 # Total Population Distribution & Distribution of Population By Gender
 
-```{r faceted_histo}
+```{r}
 # Featured Engineering of PercentageMen & PercentageWomen
 county_df$PercentageMen <- (county_df$Men/county_df$TotalPop)*100
 county_df$PercentageWomen <- (county_df$Women/county_df$TotalPop)*100
@@ -382,26 +386,25 @@ county_df$PercentageWomen <- (county_df$Women/county_df$TotalPop)*100
 county_df$PercentageMale <- NULL
 
 # Total Population Distribution
-ggplot(county_df, aes(x=TotalPop, fill = Region)) + geom_histogram() + labs(
+ggplot(county_df, aes(x=TotalPop, fill = Region), binwidth = 300000) + geom_histogram() + labs(
     x = "Total Population",                                                # x axis title
     y = "Count",                                                           # y axis title
     title = "Total Population Distribution Across Various Regions"         # main title of figure 
 ) + facet_wrap(~Region) + scale_x_log10()
 
 # Percentage of Men Across Total Population Distribution
-ggplot(county_df, aes(x=PercentageMen, fill = Region)) + geom_histogram() + labs(
+ggplot(county_df, aes(x=PercentageMen, fill = Region), binwidth = 300000) + geom_histogram() + labs(
     x = "Men Population %",                                               # x axis title
     y = "Count",                                                          # y axis title
     title = "Men Population Distribution Across Various Regions"          # main title of figure 
-) + facet_wrap(~Region) + scale_y_log10()
+) + facet_wrap(~Region)
 
 # Percentage of Women Across Total Population Distribution
-ggplot(county_df, aes(x=PercentageWomen, fill = Region)) + geom_histogram() + labs(
+ggplot(county_df, aes(x=PercentageWomen, fill = Region), binwidth = 300000) + geom_histogram() + labs(
     x = "Women Population %",                                              # x axis title
     y = "Count",                                                           # y axis title
     title = "Women Population Distribution Across Various Regions"         # main title of figure 
-) + facet_wrap(~Region) + scale_y_log10()
-
+) + facet_wrap(~Region)
 
 ```
 
@@ -457,7 +460,7 @@ geom_point() + facet_grid(peninsula ~ .)
 
 From the Scatterplots of the two variables Total Population and the Citizen, there seems to be a steady slope between these two variables Total Population and Citizen. Hence, we can say that these two variables Total Population and Citizen have a Positive Correlation or in other words these two variables have a Strong Correlation between each other across both the Upper & Lower Peninsula in Michigan.
 
-```{r xy_faceted_peninsula}
+```{r}
 
 ggplot(county_MI, aes(Citizen, TotalPop, color = peninsula)) +
 geom_point() + facet_grid(. ~ peninsula)
@@ -468,7 +471,7 @@ geom_point() + facet_grid(. ~ peninsula)
 
 From the Scatterplots of the two variables, Total Population and the Unemployment, it looks like that there is a weak correlation between the Total Population and the Unemployment across both the Upper and Lower Peninsula.
 
-```{r xy_faceted_peninsula}
+```{r}
 ggplot(county_MI, aes(Unemployment, TotalPop, color = peninsula)) +
 geom_point() + facet_grid(peninsula ~ .)
 ```
