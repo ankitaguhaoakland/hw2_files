@@ -277,7 +277,7 @@ The Median of the Income Per Capita distribution across Upper Peninsula is lower
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=IncomePerCap, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                              # x axis title
-    y = "Income Per Capita",                                           # y axis title
+    y = "Income Per Capita",                                      # y axis title
     title = "Income per capita Distribution by Peninsula"         # main title of figure 
 ) 
 ```
@@ -300,7 +300,7 @@ The Median of the Unemployment Distribution across Upper Peninsula looks more to
 
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=Unemployment, fill = peninsula)) + geom_boxplot() + labs(
-    x = "Peninsula",                                           # x axis title
+    x = "Peninsula",                                             # x axis title
     y = "Unemployment",                                          # y axis title
     title = "Unemployment Distribution Across Peninsula"         # main title of figure 
 ) 
@@ -327,15 +327,15 @@ The Median of the number of Women across the Upper Peninsula seems to be more cl
 ```{r more_boxplots}
 # Number of Men
 ggplot(county_MI, aes(x=peninsula, y=Men, fill = peninsula)) + geom_boxplot() + labs(
-    x = "Peninsula",                                 # x axis title
-    y = "Men",                                       # y axis title
-    title = "Number of Men Across Peninsula"         # main title of figure 
+    x = "Peninsula",                                    # x axis title
+    y = "Men",                                          # y axis title
+    title = "Number of Men Across Peninsula"            # main title of figure 
 ) + scale_y_log10()
 
 # Number of Women 
 ggplot(county_MI, aes(x=peninsula, y=Women, fill = peninsula)) + geom_boxplot() + labs(
     x = "Peninsula",                                   # x axis title
-    y = "Women",                                         # y axis title
+    y = "Women",                                       # y axis title
     title = "Number of Women Across Peninsula"         # main title of figure 
 ) + scale_y_log10()
 
