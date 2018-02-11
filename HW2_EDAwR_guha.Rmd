@@ -112,11 +112,11 @@ summary(county_MI)
 ```
 
 
-What differences do you notice between the structure of the two data frames.
+What differences do you notice between the structure of the two data frames?
 
 The data frame county_MI appears to be a sub-set of the dataframe county_df. 
 The data frame county_MI consists of the data related to the state of Michigan and also it does not have any NA values, as seen in the data frame county_df. 
-The number of variables in the data frame county_MI is one less than the dataframe county_df. And since, county_MI is a subset of the data frame county_df, therefore the number of observations is also less. 
+The number of variables in the data frame county_MI is one greater than the dataframe county_df and that extra variable is the Peninsula field. And since, county_MI is a subset of the data frame county_df, therefore the number of observations is also less. 
 
 # Structure of Data Frame county_df
 ```{r}
@@ -142,19 +142,18 @@ income for the entire US.
 
 Write a short paragraph describing the distribution of median incomes.
 
-From the Histogram as we can see that both the Median and the Mean incomes are equal and hence the distribution of income over the entire US is symmetrically distributed. 
+The distribution of the Median Income for the entire US is little less than the Mean Income of the entire US. For this data set, since the Mean Income is slightly larger than the Median Income, so we can say that the histogram of the data is slightly skewed to the right. This means that, a few larger values bring the mean upwards but don’t really affect the median.
 
-From the Boxplot, it can be said that, the Median Income for the entire US is closer to the lower end of the spectrum of all the values and is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers). The Median income for the entire US is along the mid line of the box, starting a little below 50,000 and we can approximate the same as around $ 45,000. 
-
-From both the Kernel Density Plot as well as the Violin plot we can see that the spread of the Income for the entire US is topping and buldging respectively somehwere around 45,000.
 
 # Histogram
+
+From the Histogram as we can see that both the Median and the Mean incomes are slightly unequal and hence the distribution of income over the entire US is not exactly symmetrically distributed, rather the data is slightly skewed to the right.
 
 ```{r}
 median_income <- median(county_df$Income, na.rm = TRUE)
 median_income
 
-mean_income <- median(county_df$Income, na.rm = TRUE)
+mean_income <- mean(county_df$Income, na.rm = TRUE)
 mean_income
 
 library(ggplot2)
@@ -164,14 +163,19 @@ ggplot(data = county_df) +
 ```
 
 # BoxPlot 
-There needs to be some value corresposnding to x aesthetic, so used 1. 
+
+From the Boxplot, it can be said that, the Median Income for the entire US is closer to the lower end of the spectrum for all the values that is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers). The Median income for the entire US is along the mid line of the box, starting a little below 50,000 and we can approximate the same as around $ 45,000. 
 
 ```{r}
-ggplot(county_df, aes(y=Income, x=1)) + geom_boxplot(fill = "orange", alpha = 0.2)
+# There needs to be some value corresposnding to x aesthetic, so used 1. 
+ggplot(county_df, aes(y=Income, x=1)) + geom_boxplot(fill = "orange", alpha = 0.2) 
+
 
 ```
 
 # Kernel Density Plot
+
+From both the Kernel Density Plot as well as the Violin plot we can see that the spread of the Income for the entire US is topping and buldging respectively somehwere around 45,000.
 
 ```{r}
 library(ggplot2)
@@ -193,7 +197,7 @@ ggplot(data = county_df) + geom_histogram(aes(x = TotalPop), binwidth = 400000)
 
 ```
 
-Repeat the histogram about but make the following style changes to the plot.
+Repeat the histogram above but make the following style changes to the plot.
 
 * Add a title such as "Distribution of population for US counties"
 * Change y-axis label to "Number of counties"
@@ -204,7 +208,7 @@ Repeat the histogram about but make the following style changes to the plot.
 library(ggplot2)
 ggplot(data = county_df) + geom_histogram(aes(x = TotalPop), fill = "violet", color = "black") + labs(
     x = "Total Population",                                    # x axis title
-    y = "Number of counties",                                  # y axis title
+    y = "Number of Counties",                                  # y axis title
     title = "Distribution of population for US counties"       # main title of figure
   ) + scale_x_log10()
 ```
@@ -227,8 +231,8 @@ county_sub <-subset(county_df, TotalPop < 2500000)
 library(ggplot2)
 ggplot(data = county_sub) + geom_histogram(aes(x = TotalPop), binwidth = 100000, fill = "orange", color = "black") + labs(
     x = "Total Population",                                                                      # x axis title
-    y = "Number of counties",                                                                    # y axis title
-    title = "Distribution of population for US counties with less than 2.5 million poeple"       # main title of figure
+    y = "Number of Counties",                                                                    # y axis title
+    title = "Distribution of Population for US Counties with Less than 2.5 Million People"       # main title of figure
   )
 
 ```
@@ -257,7 +261,7 @@ some of the other variables. Summarize your findings in a few short paragraphs.
 
 # i) Population Distribution Across Peninsula
 
-The total population distribution for LP is higher than that of the UP. The Median of the Total Population distribution for Upper Peninsula is closer to the lower end of the spectrum for all of the population value and is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers), indicating thin population distribution in Upper Peninsula as compared to that of the Lower Peninsula. On the other hand, the Median of the Total Population distribution is higher in Lower Peninsula as compared to that of the Upper Peninsula.
+The total population distribution for LP is higher than that of the UP. The Median of the Total Population distribution for Upper Peninsula is closer to the lower end of the spectrum for all of the population value that is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers), indicating thin population distribution in Upper Peninsula as compared to that of the Lower Peninsula. On the other hand, the Median of the Total Population distribution is higher in Lower Peninsula as compared to that of the Upper Peninsula.
 
 ```{r more_boxplots}
 ggplot(county_MI, aes(x=peninsula, y=TotalPop, fill=peninsula)) + geom_boxplot() + labs(
@@ -269,7 +273,7 @@ ggplot(county_MI, aes(x=peninsula, y=TotalPop, fill=peninsula)) + geom_boxplot()
 
 # ii) Poverty Distribution across Peninsula
 
-The Median of the poverty distribution for the UP is somewhere around 16 and is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers), indicating that the Median of the Poverty distribution is closer to the lower end of the entire spectrum in Upper Peninsula as compared to that of the Lower Peninsula. In case of the LP or Lower Peninsula, the Median of the poverty distribution is around 18 and is towards the right whiskers (top whiskers) as compared to the left whiskers (down whiskers). The Median of the poverty distribution for Lower Peninsula is at a higher side as compared to that of the Upper Peninsula.
+The Median of the poverty distribution for the UP is somewhere around 16 and is closer to the end of the left whiskers (down whiskers) than to that of the end of the right whisker (top whiskers), indicating that the Median of the Poverty distribution is closer to the lower end of the entire spectrum in Upper Peninsula as compared to that of the Lower Peninsula. In case of the LP or Lower Peninsula, the Median of the poverty distribution is around 18 and is towards the right whiskers (top whiskers) as compared to the left whiskers (down whiskers). The Median of the poverty distribution for Lower Peninsula is at a slightly higher side as compared to that of the Upper Peninsula.
 
 ```{r}
 ggplot(county_MI, aes(x=peninsula, y=Poverty, fill = peninsula)) + geom_boxplot() + labs(
@@ -282,7 +286,7 @@ ggplot(county_MI, aes(x=peninsula, y=Poverty, fill = peninsula)) + geom_boxplot(
 
 # iii) Child Poverty Distribution across Peninsula
 
-The Median of the Child Poverty Distribution for Upper Peninsula is at 25 and it goes around the middle of the entire spectrum of the boxplot. From the Box-plot it looks like all the Quartiles for the Upper Peninsula are uniformly and equally distributed. The Median of the Child Poverty Distribution for Lower Peninsula is slightly below 25 and the Median of the Child Poverty Distribution for the entire spectrum of the boxplot is towards the top whiskers (or the right whiskers).
+The Median of the Child Poverty Distribution for Upper Peninsula is at 25 and it goes around the middle of the entire spectrum of the boxplot. From the Box-plot it looks like all the Quartiles of child poverty distribution for the Upper Peninsula are uniformly and equally distributed. The Median of the Child Poverty Distribution for Lower Peninsula is slightly below 25 and the Median of the Child Poverty Distribution for the entire spectrum of the boxplot is towards the top whiskers (or the right whiskers).
 
 ```{r}
 ggplot(county_MI, aes(x=peninsula, y=ChildPoverty, fill = peninsula)) + geom_boxplot() + labs(
@@ -295,7 +299,7 @@ ggplot(county_MI, aes(x=peninsula, y=ChildPoverty, fill = peninsula)) + geom_box
 
 # iv) Income per capita Distribution by Peninsula
 
-The Median of the Income Per Capita distribution across Upper Peninsula is lower than that of the Median of the Income per capita distribution in the Lower Peninsula. The Median of the Income per capita distribution for the Upper Peninsula is lower than the value of 22,500, while the Median of the Income per capita distribution for the Lower Peninsula is greater than the value of 22,500.
+The Median of the Income Per Capita distribution across Upper Peninsula is lower than the Median of the Income per capita distribution in the Lower Peninsula. The Median of the Income per capita distribution for the Upper Peninsula is lower than the value of 22,500, while the Median of the Income per capita distribution for the Lower Peninsula is greater than the value of 22,500.
 
 ```{r}
 ggplot(county_MI, aes(x=peninsula, y=IncomePerCap, fill = peninsula)) + geom_boxplot() + labs(
@@ -307,7 +311,7 @@ ggplot(county_MI, aes(x=peninsula, y=IncomePerCap, fill = peninsula)) + geom_box
 
 # v) Employment Distribution Across Peninsula
 
-Considering the Employment distribution across both the Upper & the Lower Peninsula, it looks like the Median of the Employment Distribution for the Upper Peninsula is much lower as compared to that of the Lower Peninsula.
+Considering the Employment distribution across both the Upper & Lower Peninsula, it looks like the Median of the Employment Distribution for the Upper Peninsula is much lower as compared to that of the Lower Peninsula.
 
 ```{r}
 ggplot(county_MI, aes(x=peninsula, y=Employed, fill = peninsula)) + geom_boxplot() + labs(
@@ -331,7 +335,7 @@ ggplot(county_MI, aes(x=peninsula, y=Unemployment, fill = peninsula)) + geom_box
 
 # vii) Citizens Distribution Across Peninsula
 
-The Median of the number of Citizen Distribution looks to be on the higher side for the Lower Peninsula as compared to that of the Upper Peninsula. The Median value of the Citizen Distribution is closer towards the lower end of the entire spectrum, for the Upper Peninsula. While the Median value of the Citizen Distribution across the Lower Peninsula seems to be little dragged towards the down whisker (left). The entire quartile for the citizens distribution across both the Upper Peninsula is smaller as compared to that of the Lower Peninsula.
+The Median of the number of Citizen Distribution looks to be on the higher side for the Lower Peninsula as compared to that of the Upper Peninsula. The Median value of the Citizen Distribution is closer towards the lower end of the entire spectrum, for the Upper Peninsula. While the Median value of the Citizen Distribution across the Lower Peninsula seems to be little dragged towards the down whisker (left). The entire quartile for the citizens distribution across Upper Peninsula is smaller as compared to that of the Lower Peninsula.
 
 ```{r}
 ggplot(county_MI, aes(x=peninsula, y=Citizen, fill = peninsula)) + geom_boxplot() + labs(
@@ -366,7 +370,7 @@ ggplot(county_MI, aes(x=peninsula, y=Women, fill = peninsula)) + geom_boxplot() 
 
 # ix) Mean Commute Time Across Peninsula
 
-The Median of the Mean Commute Time in Upper Peninsula seems to be more closer towards the Median value of the Mean Commute Time, which is approximately 17. It looks like the Mean Commute Time in Upper Peninsula is less than that of the Lower Peninsula. The Median of the Mean Commute Time in Lower Peninsula seems to be little inclined towards the down whisker (left whisker) of the entire quartile.
+The Median of the Mean Commute Time in Upper Peninsula seems to be more closer towards the Median value of the Mean Commute Time, which is approximately 18. It looks like the Mean Commute Time in Upper Peninsula is less than that of the Lower Peninsula. The Median of the Mean Commute Time in Lower Peninsula seems to be little inclined towards the down whisker (left whisker) of the entire quartile.
 
 ```{r}
 ggplot(county_MI, aes(x=peninsula, y=MeanCommute, fill = peninsula)) + geom_boxplot() + labs(
@@ -394,7 +398,18 @@ ggplot(county_df, aes(x=MeanCommute, fill = Region)) + geom_histogram() + labs(
 ) + facet_wrap(~Region) 
 ```
 
-# Total Population Distribution & Distribution of Population By Gender
+# Total Population Distribution
+
+```{r}
+# Total Population Distribution
+ggplot(county_df, aes(x=TotalPop, fill = Region), binwidth = 300000) + geom_histogram() + labs(
+    x = "Total Population",                                                # x axis title
+    y = "Count",                                                           # y axis title
+    title = "Total Population Distribution Across Various Regions"         # main title of figure 
+) + facet_wrap(~Region) + scale_x_log10()
+```
+
+# Distribution of Population By Gender
 
 ```{r}
 # Featured Engineering of PercentageMen & PercentageWomen
@@ -403,13 +418,6 @@ county_df$PercentageWomen <- (county_df$Women/county_df$TotalPop)*100
 
 # Dropping a Column added by mistake
 county_df$PercentageMale <- NULL
-
-# Total Population Distribution
-ggplot(county_df, aes(x=TotalPop, fill = Region), binwidth = 300000) + geom_histogram() + labs(
-    x = "Total Population",                                                # x axis title
-    y = "Count",                                                           # y axis title
-    title = "Total Population Distribution Across Various Regions"         # main title of figure 
-) + facet_wrap(~Region) + scale_x_log10()
 
 # Percentage of Men Across Total Population Distribution
 ggplot(county_df, aes(x=PercentageMen, fill = Region), binwidth = 300000) + geom_histogram() + labs(
@@ -477,10 +485,9 @@ geom_point() + facet_grid(peninsula ~ .)
 
 # ii) Scatterplots of Total Population by Citizen Across the Peninsula 
 
-From the Scatterplots of the two variables Total Population and the Citizen, there seems to be a steady slope between these two variables Total Population and Citizen. Hence, we can say that these two variables Total Population and Citizen have a Positive Correlation or in other words these two variables have a Strong Correlation between each other across both the Upper & Lower Peninsula in Michigan.
+From the Scatterplots of the two variables Total Population and the Citizen, there seems to be a steady slope between these two variables. Hence, we can say that these two variables Total Population and Citizen have a Positive Correlation or in other words these two variables have a Strong Correlation between each other across both the Upper & Lower Peninsula in Michigan.
 
 ```{r}
-
 ggplot(county_MI, aes(Citizen, TotalPop, color = peninsula)) +
 geom_point() + facet_grid(. ~ peninsula)
 
@@ -488,7 +495,7 @@ geom_point() + facet_grid(. ~ peninsula)
 
 # iii) Scatterplots of Total Population by Employment Across the Peninsula
 
-From the Scatterplots of the two variables, Total Population and the Unemployment, it looks like that there is a weak correlation between the Total Population and the Unemployment across both the Upper and Lower Peninsula.
+From the Scatterplots of the two variables, Total Population and Unemployment, it looks like that there is a weak correlation between the Total Population and Unemployment across both the Upper and Lower Peninsula.
 
 ```{r}
 ggplot(county_MI, aes(Unemployment, TotalPop, color = peninsula)) +
@@ -517,11 +524,11 @@ ggplot(data = county_df, aes(x = Income, y = TotalPop)) + geom_point() + scale_y
 
 Write a short paragraph on why one might want to use a log scale or log transform of data when plotting.
 
-The datasets might have values that vary from each other on a large scale as seen in the first scatterplot (# Plot of Total Population by Income, Not Scaled) above between Total Population and the Income. It is very hard to get a clarity on the data points whereby the datasets are overlapping on one another making it hard to comprehend any relationship between these two variables. This property of variability between two variables of data is due to the uneven variation of values with the mean value in the datasets often known as heteroscedastic variance. Using a log scale or, equivalently, using the log transform 'fixes' the uneven variability and gives a scale that is unbounded on both ends.
+The datasets might have values that vary from each other on a large scale as seen in the first scatterplot (# Plot of Total Population by Income, Not Scaled) as shown above. It is very hard to get a clarity on the data points whereby the datasets are overlapping on one another making it hard to comprehend any relationship between these two variables. This property of variability between two variables of data due to uneven variation of values with the mean value in the datasets is known as heteroscedastic variance. Using a log scale or, equivalently, using the log transform 'fixes' the uneven variability and gives a scale that is unbounded on both ends.
 
 Also, for time-series data, the ability of a log scale to make fractional changes is immensely powerful. With log scale a constant percentage change is seen as a constant vertical distance so a constant growth rate is seen as a straight line. That is often a substantial advantage.
 
-Another reason when log scale proves to be powerful, when it makes more realistic to represent the data in a reciprocal manner, as for example in research areas where someone is dealing with minutely small numbers.
+Another reason when log scale proves to be powerful, is when it makes more realistic to represent the data in a reciprocal manner, as for example in research areas where someone is dealing with minutely small numbers.
 
 ### Hacker Extra - More analysis
 
@@ -532,7 +539,8 @@ control, or others.
 
 # i) Percentage of Women & Men Population Distribution For US Across Regions
 
-The histogram for the percentage of Men and Women Population across the entire US for the Regions Midwest, Northeast, South, and East seemed to be skewed to the left and right respectively. 
+The histogram for the percentage of Women & Men Population across the entire US for the Regions Midwest, Northeast, South, and East seems to have a higher distribution across both Midwest & South as compared to the regions, South & East. 
+
 ```{r}
 library(ggthemes)
 
@@ -566,9 +574,9 @@ ggplot(county_MI, aes(IncomePerCap, TotalPop, color = peninsula)) + geom_point()
 )
 ```
 
-# iii) Employment Distribution Across Total Population Across UP & LP in Michigan
+# iii) Employment Distribution Across Total Population For UP & LP in Michigan
 
-There seems to have a positive correlation between Employment Distribution across the Total Population in both the Upper & Lower Peninsula in Michigan.
+There seems to have a positive correlation between Employment Distribution across the Total Population distribution in both the Upper & Lower Peninsula in Michigan.
 
 ```{r}
 ggplot(county_MI, aes(Employed, TotalPop, color = peninsula)) + geom_point() + scale_y_log10() + geom_point(aes(shape = peninsula), size = 3) + labs(
@@ -578,7 +586,7 @@ ggplot(county_MI, aes(Employed, TotalPop, color = peninsula)) + geom_point() + s
 )
 ```
 
-# iv) Unemployment Distribution Across Total Population Across UP & LP in Michigan
+# iv) Unemployment Distribution Across Total Population For UP & LP in Michigan
 
 The Unemployment Distribution with respect to the Total Population seems to have a scattered relationship amongst the datapoints within the datasets and hence from the visuals of the graphical results we can conclude that the Unemployment Distribution and the Total Population across both the Upper & Lower Peninsula has a weak correlation. 
 
