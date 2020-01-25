@@ -1,0 +1,423 @@
+---
+title: "Intro to data science"
+author: "isken"
+date: "August 14, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is a short R Markdown document based on Chapter 1 of "Practical Data
+Science with R". This chapter introduces the process of data science (business
+analytics) projects. It is NOT meant to be an example of an exhaustive analysis.
+It's just meant to give you a peek at the nature of a predictive modeling
+project and how R can be used to support such analytical projects. Yes, it's
+overly simplified and sanitized. We'll get into more messy realities throughout
+the semester.
+
+## Preliminaries
+
+We need to set the working directory to the directory containing this file.
+
+**Session | Set Working Directory | To Source File Location**
+
+We'll almost always be loading some libraries.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+## Stages of a business analytics project
+
+Like most projects, analytical projects are seldom linear. There are numerous 
+feedback loops between the stages and projects tend to be iterative in nature.
+Just defining the problem can be quite difficult. Nevertheless, it can be
+helpful to discuss the typical stages. Following the sections of Chapter 1,
+we'll use an example from an ongoing Kaggle "Getting Started" competition to
+both illustrate the concepts as well as give you a preview of the wonders of R.
+
+The following diagram is from Chapter 1 of "R for Data Science" by Hadley
+Wickham. This is a new book that we'll be usign quite a bit. We'll refer
+to it as [r4ds](http://r4ds.had.co.nz/). The online version is free.
+
+![data science workflow](images/data_science_workflow.png)
+
+Resources on the CRISP-DM framework, a process for data mining projects.
+
+* https://en.wikipedia.org/wiki/Cross_Industry_Standard_Process_for_Data_Mining
+* https://itsalocke.com/crisp-dm/
+* https://www.the-modeling-agency.com/crisp-dm.pdf
+* http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.198.5133&rep=rep1&type=pdf
+* https://www.coursera.org/learn/big-data-machine-learning/lecture/icJH6/crisp-dm
+
+## Define the goal
+
+Predicting the selling price of a home based on a number of features of the home
+makes for a very nice predictive modeling problem. Anyone who has purchased or 
+is thinking of purchasing a home is interested in paying a fair price for the 
+home. In fact, Zillow's home price prediction model has had quite an impact on
+the real estate industry. Currently, there is an ongoing [Kaggle competition to
+improve upon Zillow's home value model](https://www.kaggle.com/c/zillow-prize-1)
+that has a prize of $1,200,000. Yep.
+
+There is also a similar, but simpler, Kaggle competition called [House Prices:
+Advanced Regression
+Techniques](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
+It's what's known as a Getting Started competition, has no prize money, is worth
+no ranking points, but is designed for data science beginners to learn to do 
+predictive modeling. Let's go visit the website to get a sense of the problem.
+We'll start with the Overview section and the Data section. ...
+
+Whoa! That's quite a few fields to deal with. Let's use an even simpler dataset
+for predicting house prices. The [House Sales in King County,
+USA](https://www.kaggle.com/harlfoxem/housesalesprediction) dataset can be found
+in the Datsets section of Kaggle. This is one of Kaggle's great features beyond
+the competitions. People create and share interesting datasets so that others
+can use them to learn to do data analysis. You can even share your analysis
+through something called Kernals.
+
+We see that the King County dataset has 19 predictors that we can use to try to
+predict the selling price. That's our goal - predict selling price. How will we
+evaluate our predictions? We'll use the same metric as in the similar getting
+Getting Started competition:
+
+> Submissions are evaluated on Root-Mean-Squared-Error (RMSE) between the logarithm
+> of the predicted value and the logarithm of the observed sales price. (Taking logs
+> means that errors in predicting expensive houses and cheap houses will affect the
+> result equally.)
+
+## Data collection and management
+
+In this case, we are given the dataset with a well defined target column,
+`price`. Of course, this is totally unrealistic. Instead you'll often deal with 
+spectaculary ill structured text files or massive relational databases with tons
+of missing values, columns you wish you had and non-existent or poorly written
+data dictionaries. A relevant target variable may be elusive to define. You'll
+have to be extremely careful that you aren't accidentally *clairvoyant* or
+permissive of *future leaking* into your predictors.
+
+You'll spend huge amounts of time wrangling this data into usable shape and then
+still find there are many elements important to the problem at hand that you
+simply don't have. You will be well served by getting good with things like:
+
+* regular expressions
+* a good text hacking language like Python, Perl, R, Sed, Awk
+* SQL and database knowledge
+* web scraping skills
+* business domain common sense
+* communication and detective skills
+* a lot of persistence and patience
+
+Let's read the data in and check it out.
+
+```{r readdata}
+kc_house_data <- read.csv("./data/kc_house_data.csv", stringsAsFactors = FALSE)
+str(kc_house_data)
+```
+
+A few things to note:
+
+* the variable we are trying to predict is called `price`.
+* the `id` column isn't useful for prediction.
+* the date is in a string format that we could parse, but we will just ignore for now.
+* `waterfront` and `view` are likely (maybe) binary variables where a 1 means yes and 0 no.
+* while some of the variables are pretty self explanatory, others (e.g. `condition, grade, sq_living15`) are not.
+
+A big part of most analytics projects involves a bunch of detective work to
+figure out the meaning and usefulness of the fields in the dataset. For this
+example, I went into the [Discussion
+forum](https://www.kaggle.com/harlfoxem/housesalesprediction/discussion/23194)
+associated with the dataset and found a link to a nice data dictionary. See
+https://rstudio-pubs-static.s3.amazonaws.com/155304_cc51f448116744069664b35e7762999f.html.
+
+### Drop unneeded columns
+
+To simplify things, let's just use the following fields to start:
+
+* price        
+* bedrooms     
+* bathrooms    
+* sqft_living  
+* sqft_lot     
+* floors       
+* waterfront   
+* sqft_above   
+* sqft_basement
+* yr_built 
+
+This is called "subsetting the data". Since I can easily reread in the
+original data, I'm going to use the same variable for the reduced data set.
+
+```{r subset}
+cols_to_use <- c("price", "bedrooms", "bathrooms", "sqft_living",
+                 "sqft_lot", "floors", "waterfront",
+                 "sqft_above", "sqft_basement", "yr_built")
+
+kc_house_data <- kc_house_data[, cols_to_use]
+str(kc_house_data)
+```
+
+### Feature engineering
+
+Another extremely important activity that takes place in this stage is called 
+"feature engineering". This is when we create new variables based on existing 
+variables that we believe will be more useful in our predictive models. Again,
+you must be hypervigilant against accidental clairvoyance in that you don't
+allow information into your predictor variables that you wouldn't have at the
+time you are trying to make predictions. A silly example of this for our problem
+would be inclusion of the amount of the real estate commision.
+
+In this example, we'll create two such new variables.
+
+* age = 2017 - yr_built
+* basement = 1 if sqft_basement > 0 and 0 otherwise.
+
+Then we'll use `age` and `basement` instead of `yr_built` and `sqft_basement`.
+
+In Excel, this would play out as new column formulas. In R, we do something like this:
+
+```{r feature_eng}
+kc_house_data$age <- 2017 - kc_house_data$yr_built
+kc_house_data$basement <- ifelse(kc_house_data$sqft_basement > 0, 1, 0)
+```
+
+### Exploratory data analysis
+
+Another common task at this stage is to do some preliminary exploration of
+your data.
+
+* missing data?
+* erroneous data?
+* descriptive statistics
+* correlations
+* random insights
+
+For now, we'll just do a basic summary of the variables and a few basic plots.
+
+```{r summary}
+summary(kc_house_data)
+```
+
+Here's a histogram of `price`.
+
+```{r histo_price}
+ggplot(data = kc_house_data) + geom_histogram(aes(x=price))
+```
+
+```{r}
+library(corrplot)
+```
+
+```{r}
+cor(kc_house_data)
+```
+
+```{r}
+corrplot(corr = cor(kc_house_data), method="circle")
+```
+
+Not surprisingly, price is positively correlated with the number of bathrooms
+and a few variables related to square footage of living space. It's interesting
+to see that the number of bathrooms is strongly negatively correlated with the 
+age of the house - modern living means more bathrooms. You must be careful to
+not put too much stock into things like simple pairwise correlations. Two
+variables can be highly related and yet have a simple correlation coefficient of
+zero.
+
+**Question:** Why this is true? If you don't know, it's time to brush up on basic statistics.
+
+### Dataset partitioning
+
+Our goal is to use the data we have to build a predictive model that will 
+perform well on **new data that wasn't used to build the model**. I'll often
+say, and we'll certainly see, that it's pretty easy to build models that **fit**
+well. It's much harder to build models that **predict** well.
+
+**Question:** If you do a scatter plot with 10 data points, how could you create
+a model curve that fits these points perfectly?
+
+One simple way of trying to do this is to partition our data into a *training*
+set and a *test* set. Use the training set for model building and then compare
+competing models on their performance on the test data. You'll notice that this
+is what is done in Kaggle competitions.
+
+Create a simple 80/20 split for fit and test data. We'll learn better ways to
+do data partitioning later in the class.
+
+```{r partition}
+set.seed(1592) # Make our example reproducible by controlling random number generator
+trainrecs <- sample(nrow(kc_house_data),0.8 * nrow(kc_house_data))
+kc_house_data_train <- kc_house_data[trainrecs,]
+kc_house_data_test <- kc_house_data[-trainrecs,]  # Negative in front of vector means "not in"
+```
+
+## Modeling
+
+This is where we finally get to build some predictive models. There are a
+number of different modeling techniques we'll learn about in this class. For now
+we'll just try two different techniques and just use a few of the
+predictors.
+
+* multiple linear regression
+* regression tree
+
+### Linear regression
+
+We'll build one regression model using all of our predictors. In real projects,
+the issue of *variable selection* can be a tricky one as we may have many
+potential predictor variables and we have to beware of *overfitting*. This is
+something we'll discuss quite a bit.
+
+```{r linreg_model}
+lm1 <- lm(price ~ ., data = kc_house_data_train)
+summary(lm1)
+```
+
+We'll be reviewing what all of that output means, but I'm sure you remember that
+$R^2$ (*R-squared*) is a measure of the proportion of variation in the data
+explained by the model. It ranges from 0 to 1 and is a measure of *fit* of the
+model to the training data.
+
+**Question:** If you add an additional variable to an existing linear regression
+model, can the $R^2$ value ever decrease? What about the adjusted $R^2$ value?
+
+### Regression (decision) trees
+
+There are numerous predictive modeling techniques based on the notion of *trees*.
+Nodes of the trees are the predictor variables and the branches represent
+splits of the variable based on its value. The picture below will give you
+a general idea. We'll explore several popular tree based techniques.
+
+```{r tree_libs}
+library(rpart)
+library(rpart.plot)
+library(RColorBrewer)
+```
+
+
+```{r maketree}
+tree1 <- rpart(price ~ ., data = kc_house_data_train, method="anova")
+rpart.plot(tree1)
+tree1
+```
+
+### Make predictions for the test data
+
+Notice how the R `predict` command is used here for two totally different model types. 
+
+**Question:** Why is that kind of nice?
+
+```{r predict_lm}
+lm1_predict <- predict(lm1, newdata = kc_house_data_test)
+head(lm1_predict) # Output of predict is a vector of predictions
+```
+
+```{r tree_predict}
+tree1_predict <- predict(tree1, newdata = kc_house_data_test)
+head(tree1_predict) # Output of predict is a vector of predictions
+```
+
+Scatter plots of actual sales price vs predicted sales price can give a quick
+visual indication of how well the models fit.
+
+```{r act_vs_pred}
+ggplot() + geom_point(aes(x=kc_house_data_test$price, y=lm1_predict))
+```
+
+Notice that there are two negative predicted values. That can be a problem
+with simple regression models. 
+
+**Question:** Why would a linear regression model ever return a negative
+prediction if all of the $X$ and $y$ variables are positive?
+
+We'll just set those predictions to (near) 0.
+
+```{r predict_fix}
+lm1_predict <- ifelse(lm1_predict <= 0, 0.1, lm1_predict)
+```
+
+Here's the same scatter plot for the tree model.
+
+```{r treescatter}
+ggplot() + geom_point(aes(x=kc_house_data_test$price, y=tree1_predict))
+```
+
+**Question:** Can you figure out why the two plots look so different?
+
+## Model evaluation
+
+Now let's compute the error metric for the two models. One of the great strengths
+of R is that we can write our own functions.
+
+```{r log_err_func}
+rms_log_err <- function(actual, predicted){
+  
+  logerrsqrd <- (log10(actual) - log10(predicted)) ** 2
+  sqrt(mean(logerrsqrd))
+}
+```
+
+```{r rpt_errors}
+err_lm1 <- rms_log_err(kc_house_data_test$price, lm1_predict)
+err_tree1 <- rms_log_err(kc_house_data_test$price, tree1_predict)
+
+sprintf("lm1 error: %.3f   tree1 error: %.3f", err_lm1, err_tree1)
+```
+
+In this case, the tree outperforms the linear regression model on our chosen
+error metric. The scatter plot for the tree model reveals some perhaps
+undesirable "banding" of the predictions. Obviously, there is much more we could
+do in terms of modeling and model evaluation but this small example gives you a
+sense of the process.
+
+**Question:** What are some other reasonable error metrics we could use for this problem?
+
+**Question:** What are some potential issues with the random 80/20 split we made
+of thie data into training and test sets?
+
+## Presentation and documentation
+
+Communicating the results of technical analyses can be a challenge and very 
+audience dependent. The level of technical detail needed by an executive
+decision maker is likely much different than needed by an IT group charged with
+deploying such a model in an operational system. No matter who the audience,
+it's important that results be presented clearly, important assumptions and
+caveats articulated, and the analysis linked to business objectives.
+
+Don't *oversell* your models! They are just models and are unlikely to capture
+all the complexities of real problems. They can play an important role in
+complex decisions but must be complemented with business judgement, common
+sense, and a good bit of skepticism.
+
+The scatter plots showing actual vs predicted values for the two models are
+ideal candidates for inclusion in a technical presentation. The correlation
+matrix presented earlier is not likely a good candidate for a final presentation
+to decision makers.
+
+## Deployment
+
+Moving from offline analysis to a deployable model can be a huge challenge.
+
+* Does model need to be implemented in another language?
+* How will model get "fed" its input values?
+* How will end users interact with the model?
+* How often do model parameters need to be updated?
+* Who is responsible for model and data maintenance?
+
+Can you envision various deployment scenarios for the 
+two simple models we fit here?
+
+## Next steps
+
+We'll spend the rest of the semester diving into these and related topics along
+the whole data science workflow pipeline. In addition to using R, we'll also
+learn the other widely used language for data science - Python. Both of these
+tools are major players in the data science and business analytics worlds. 
+Learning how to use them will set you apart from the huge number of analysts
+who can only do Excel and maybe some SQL. And yes, both Excel and SQL are
+also must have skills for any business analytics person.
